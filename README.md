@@ -103,9 +103,14 @@ tracker-tugas/
 │
 ├── 📄 cron.php             # Cron job: tugas berulang & reminder deadline H-1
 │
+├── 📁 uploads/             # Folder upload (dibuat otomatis, jangan dihapus)
+│   └── 📁 profiles/        # Foto profil user (format: {id_user}_{timestamp}.jpg)
+│
 ├── 🎨 style.css            # Semua styling — light mode, dark mode, responsif
 └── ⚡ script.js            # Logika theme toggle & password strength checker
 ```
+
+> ⚠️ Folder `uploads/profiles/` dibuat **otomatis** oleh PHP saat pertama kali ada user mengupload foto profil. Namun jika kamu ingin menyiapkannya secara manual, buat foldernya lebih dulu dan pastikan permission-nya dapat ditulis oleh web server.
 
 ---
 
@@ -246,7 +251,33 @@ if (!$conn) {
 
 ---
 
-### Langkah 4 — Jalankan Aplikasi
+### Langkah 4 — Buat Folder Upload
+
+Buat folder untuk menyimpan foto profil user:
+
+```bash
+# Di dalam folder project tracker-tugas/
+mkdir -p uploads/profiles
+```
+
+Atau buat manual lewat file manager di dalam folder `tracker-tugas/`:
+```
+tracker-tugas/
+└── uploads/
+    └── profiles/    ← buat folder ini
+```
+
+Jika menggunakan **Linux/Mac** atau server hosting, pastikan folder ini bisa ditulis oleh web server:
+
+```bash
+chmod -R 755 uploads/
+```
+
+> 💡 Jika kamu skip langkah ini, folder akan dibuat **otomatis** oleh PHP saat pertama kali ada user upload foto. Namun menyiapkannya lebih awal lebih aman dan menghindari potensi error permission.
+
+---
+
+### Langkah 5 — Jalankan Aplikasi
 
 1. Nyalakan **Apache** dan **MySQL** dari panel XAMPP/Laragon
 2. Buka browser dan akses:
@@ -309,6 +340,12 @@ Klik tombol **🌙 Mode Gelap** / **☀️ Mode Terang** di pojok kanan atas. Pr
 4. **Gunakan HTTPS** — jangan jalankan dengan koneksi HTTP di produksi
 5. **Simpan kredensial database** di file `.env` atau di luar direktori publik, bukan hardcode di `koneksi.php`
 6. **Tambahkan rate limiting** pada endpoint login untuk mencegah brute force
+7. **Lindungi folder `uploads/`** — tambahkan file `.htaccess` di dalam `uploads/profiles/` agar file PHP tidak bisa dieksekusi langsung dari browser:
+   ```apache
+   # uploads/profiles/.htaccess
+   Options -ExecCGI
+   AddHandler cgi-script .php .php3 .php4 .php5 .phtml .pl .py .jsp .asp .htm .shtml .sh .cgi
+   ```
 
 ---
 
