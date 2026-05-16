@@ -8,241 +8,190 @@ if (isset($_SESSION['login'])) {
 $error = isset($_GET['error']) ? true : false;
 ?>
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login — TaskTracker</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-    background: #0d0c2a;
-  }
-
-  /* Background */
-  .bg { position: fixed; inset: 0; background: linear-gradient(135deg, #0d0c2a 0%, #1a1740 50%, #0f1629 100%); z-index: 0; }
-
-  .blob {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(90px);
-    animation: floatBlob 12s ease-in-out infinite alternate;
-    z-index: 1;
-  }
-  .b1 { width: 500px; height: 500px; background: rgba(99,102,241,0.45); top: -150px; left: -120px; }
-  .b2 { width: 380px; height: 380px; background: rgba(168,85,247,0.4); bottom: -80px; right: -80px; animation-delay: -4s; }
-  .b3 { width: 260px; height: 260px; background: rgba(236,72,153,0.25); top: 35%; left: 65%; animation-delay: -7s; }
-
-  @keyframes floatBlob {
-    0%   { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(25px, -25px) scale(1.06); }
-  }
-
-  .noise {
-    position: fixed; inset: 0; pointer-events: none; z-index: 2; opacity: 0.3;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-  }
-
-  /* Card */
-  .wrap { position: relative; z-index: 10; width: 100%; max-width: 420px; padding: 16px; }
-
-  .card {
-    background: rgba(255,255,255,0.07);
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    border-radius: 28px;
-    border: 1px solid rgba(255,255,255,0.14);
-    padding: 44px 40px 40px;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.05), 0 40px 80px rgba(0,0,0,0.55), 0 0 60px rgba(99,102,241,0.1);
-    position: relative;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 15%; right: 15%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-  }
-
-  /* Brand */
-  .brand {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin-bottom: 32px;
-  }
-
-  .brand-icon {
-    width: 40px; height: 40px; border-radius: 11px;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 6px 18px rgba(99,102,241,0.45);
-  }
-
-  .brand-icon svg { width: 20px; height: 20px; fill: none; stroke: white; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .brand-name { font-size: 19px; font-weight: 800; color: white; letter-spacing: -0.3px; }
-
-  /* Greeting */
-  .greeting { font-size: 22px; font-weight: 800; color: white; margin-bottom: 4px; letter-spacing: -0.3px; }
-  .subtext { font-size: 13px; color: rgba(255,255,255,0.5); margin-bottom: 30px; }
-
-  /* Error Alert */
-  .alert-error {
-    background: rgba(239,68,68,0.15);
-    border: 1px solid rgba(239,68,68,0.3);
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #fca5a5;
-    margin-bottom: 22px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* Fields */
-  .field { margin-bottom: 18px; }
-  .field label {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    color: rgba(255,255,255,0.65);
-    margin-bottom: 8px;
-  }
-
-  .input-wrap { position: relative; }
-
-  .input-wrap svg.icon {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    width: 17px; height: 17px;
-    stroke: rgba(255,255,255,0.35); fill: none;
-    stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
-    pointer-events: none; transition: stroke 0.2s;
-  }
-
-  .field input {
-    width: 100%;
-    padding: 13px 14px 13px 42px;
-    background: rgba(255,255,255,0.09);
-    border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 13px;
-    color: white;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    outline: none;
-    transition: all 0.25s ease;
-    margin: 0;
-  }
-
-  .field input::placeholder { color: rgba(255,255,255,0.3); }
-
-  .field input:focus {
-    border-color: rgba(99,102,241,0.65);
-    background: rgba(255,255,255,0.14);
-    box-shadow: 0 0 0 4px rgba(99,102,241,0.15);
-  }
-
-  .field input:focus ~ svg.icon,
-  .input-wrap:focus-within svg.icon { stroke: rgba(165,180,252,0.8); }
-
-  /* Forgot */
-  .row-forgot { display: flex; justify-content: flex-end; margin: -6px 0 18px; }
-  .row-forgot a { font-size: 12px; color: #a5b4fc; text-decoration: none; font-weight: 600; }
-  .row-forgot a:hover { color: #c4b5fd; }
-
-  /* Submit */
-  .btn-submit {
-    width: 100%; padding: 14px; border: none; border-radius: 13px;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 60%, #a855f7 100%);
-    color: white; font-family: inherit; font-size: 15px; font-weight: 700;
-    cursor: pointer; letter-spacing: 0.2px; transition: all 0.25s ease;
-    box-shadow: 0 8px 24px rgba(99,102,241,0.4); position: relative; overflow: hidden;
-  }
-
-  .btn-submit::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(to bottom, rgba(255,255,255,0.12), transparent);
-    pointer-events: none;
-  }
-
-  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(99,102,241,0.55); }
-  .btn-submit:active { transform: translateY(0); }
-
-  /* Footer link */
-  .footer-link { text-align: center; margin-top: 22px; font-size: 13px; color: rgba(255,255,255,0.45); }
-  .footer-link a { color: #c4b5fd; text-decoration: none; font-weight: 700; }
-  .footer-link a:hover { color: #ddd6fe; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login — Tracker Tugas</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+    <style>
+        /* Hilangkan background ungu, pakai background dari style.css */
+        body {
+            background: var(--bg-body) !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* Hapus efek gradien/background aneh */
+        body::before, body::after {
+            display: none !important;
+        }
+        
+        .auth-container {
+            max-width: 420px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .auth-card {
+            background: var(--bg-container);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px 36px;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        
+        .auth-logo span {
+            font-size: 52px;
+        }
+        
+        .auth-title {
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+        
+        .auth-sub {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+        
+        .auth-field {
+            margin-bottom: 20px;
+        }
+        
+        .auth-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-sub);
+        }
+        
+        .auth-field input {
+            width: 100%;
+            padding: 12px 16px;
+            font-family: inherit;
+            font-size: 15px;
+            background: var(--bg-surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+        
+        .auth-field input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(67,97,238,0.1);
+        }
+        
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        
+        .auth-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        
+        .auth-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-alert {
+            background: var(--danger-light);
+            border-left: 4px solid var(--danger);
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 24px;
+            color: var(--danger);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .error-alert::before {
+            content: "⚠️";
+        }
+    </style>
 </head>
 <body>
-
-<div class="bg"></div>
-<div class="blob b1"></div>
-<div class="blob b2"></div>
-<div class="blob b3"></div>
-<div class="noise"></div>
-
-<div class="wrap">
-  <div class="card">
-
-    <div class="brand">
-      <div class="brand-icon">
-        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      </div>
-      <span class="brand-name">TaskTracker</span>
-    </div>
-
-    <div class="greeting">Selamat datang! 👋</div>
-    <div class="subtext">Masuk untuk mengelola tugas kuliahmu</div>
-
-    <?php if ($error): ?>
-    <div class="alert-error">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Username atau password salah, coba lagi.
-    </div>
-    <?php endif; ?>
-
-    <form action="proses_login.php" method="POST">
-
-      <div class="field">
-        <label>Username</label>
-        <div class="input-wrap">
-          <svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <input type="text" name="username" placeholder="Masukkan username" required autocomplete="username">
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span>📚</span>
         </div>
-      </div>
+        <div class="auth-title">Masuk</div>
+        <div class="auth-sub">Kelola tugas kuliahmu dengan mudah</div>
 
-      <div class="field">
-        <label>Password</label>
-        <div class="input-wrap">
-          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input type="password" name="password" id="pw" placeholder="Masukkan password" required autocomplete="current-password">
+        <?php if ($error): ?>
+            <div class="error-alert">
+                Username atau password salah. Coba lagi!
+            </div>
+        <?php endif; ?>
+
+        <form action="proses_login.php" method="POST">
+            <div class="auth-field">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Username kamu" required autocomplete="username">
+            </div>
+            <div class="auth-field">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
+            </div>
+            <button type="submit" name="login" class="auth-btn">Masuk →</button>
+        </form>
+
+        <div class="auth-footer">
+            Belum punya akun? <a href="register.php">Daftar sekarang</a>
         </div>
-      </div>
-
-      <div class="row-forgot"><a href="#">Lupa password?</a></div>
-
-      <button class="btn-submit" type="submit" name="login">Masuk Sekarang →</button>
-    </form>
-
-    <div class="footer-link">
-      Belum punya akun? <a href="register.php">Daftar di sini</a>
     </div>
-
-  </div>
 </div>
 
+<script>
+    (function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+</script>
 </body>
 </html>

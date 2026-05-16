@@ -1,35 +1,45 @@
 <?php
-session_start(); // Wajib ada untuk mengambil data user yang login
+session_start();
 include 'koneksi.php';
 
-// Cek login dulu agar id_user tersedia
 if (!isset($_SESSION['login'])) {
     header("Location: login.php");
     exit;
 }
 
-// Ambil ID User dari session
 $id_user = $_SESSION['id_user'];
+$error = '';
 
 if (isset($_POST['simpan'])) {
-    // Gunakan mysqli_real_escape_string agar lebih aman dari karakter aneh
     $matkul   = mysqli_real_escape_string($conn, $_POST['matkul']);
     $tugas    = mysqli_real_escape_string($conn, $_POST['tugas']);
     $deadline = $_POST['deadline'];
+    $today    = date('Y-m-d');
+    $prioritas = $_POST['prioritas'];
+    $kategori = mysqli_real_escape_string($conn, $_POST['kategori']);
+    $catatan  = mysqli_real_escape_string($conn, $_POST['catatan']);
+    $is_recurring = isset($_POST['is_recurring']) ? 1 : 0;
+    $recurring_type = $_POST['recurring_type'] ?? null;
 
-    // PERBAIKAN: Masukkan user_id ke dalam query
-    $query = "INSERT INTO tugas (user_id, matkul, tugas, deadline, status) 
-              VALUES ('$id_user', '$matkul', '$tugas', '$deadline', 'Belum')";
-    
-    if (mysqli_query($conn, $query)) {
-        header("Location: index.php");
-        exit;
+    if ($deadline < $today) {
+        $error = "Deadline tidak boleh kurang dari hari ini!";
     } else {
-        echo "Gagal menambah tugas: " . mysqli_error($conn);
+        $query = "INSERT INTO tugas (user_id, matkul, tugas, deadline, status, prioritas, kategori, catatan, is_recurring, recurring_type) 
+                  VALUES ('$id_user', '$matkul', '$tugas', '$deadline', 'Belum', '$prioritas', '$kategori', '$catatan', '$is_recurring', '$recurring_type')";
+        
+        if (mysqli_query($conn, $query)) {
+            // Log aktivitas
+            $log = "INSERT INTO activity_logs (user_id, action) VALUES ('$id_user', 'Menambah tugas: $matkul')";
+            mysqli_query($conn, $log);
+            
+            header("Location: index.php");
+            exit;
+        } else {
+            $error = "Gagal menambah tugas: " . mysqli_error($conn);
+        }
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,6 +55,10 @@ if (isset($_POST['simpan'])) {
     <a href="index.php" class="btn-kembali"><span>←</span> Kembali ke Daftar</a>
     <h2>Tambah Tugas Baru</h2>
 
+    <?php if ($error): ?>
+        <div class="error-msg" style="margin-bottom:20px;"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+
     <form method="POST" action="">
         <label>Mata Kuliah</label>
         <input type="text" name="matkul" placeholder="Contoh: Pemrograman Web" required>
@@ -53,11 +67,49 @@ if (isset($_POST['simpan'])) {
         <textarea name="tugas" rows="4" placeholder="Apa yang harus dikerjakan?" required></textarea>
 
         <label>Deadline</label>
-        <input type="date" name="deadline" required>
+        <input type="date" name="deadline" min="<?= date('Y-m-d') ?>" required>
+
+        <label>Prioritas</label>
+        <select name="prioritas">
+            <option value="Tinggi">🔥 Tinggi</option>
+            <option value="Sedang" selected>⚡ Sedang</option>
+            <option value="Rendah">✅ Rendah</option>
+        </select>
+
+        <label>Kategori</label>
+        <select name="kategori">
+            <option value="UTS">📝 UTS</option>
+            <option value="UAS">📚 UAS</option>
+            <option value="Tugas Harian">✏️ Tugas Harian</option>
+            <option value="Kelompok">👥 Kelompok</option>
+            <option value="Praktikum">💻 Praktikum</option>
+            <option value="Umum">📋 Umum</option>
+        </select>
+
+        <label>Catatan (opsional)</label>
+        <textarea name="catatan" rows="3" placeholder="Tambahkan catatan pribadi..."></textarea>
+
+        <label>
+            <input type="checkbox" name="is_recurring" id="recurring_checkbox"> Tugas berulang?
+        </label>
+
+        <div id="recurring_options" style="display: none;">
+            <label>Jenis Pengulangan</label>
+            <select name="recurring_type">
+                <option value="mingguan">📅 Setiap Minggu</option>
+                <option value="bulanan">📆 Setiap Bulan</option>
+            </select>
+        </div>
 
         <button type="submit" name="simpan">Simpan ke Daftar</button>
     </form>
 </div>
 
+<script>
+document.getElementById('recurring_checkbox').addEventListener('change', function() {
+    const options = document.getElementById('recurring_options');
+    options.style.display = this.checked ? 'block' : 'none';
+});
+</script>
 </body>
 </html>

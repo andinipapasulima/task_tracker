@@ -13,7 +13,6 @@ if (isset($_POST['login'])) {
         $row = mysqli_fetch_assoc($result);
 
         if (password_verify($password, $row['password'])) {
-            // ✅ Set semua session yang dibutuhkan index.php
             $_SESSION['login']    = true;
             $_SESSION['id_user']  = $row['id'];
             $_SESSION['username'] = $row['username'];
@@ -24,12 +23,10 @@ if (isset($_POST['login'])) {
         }
     }
 
-    // Login gagal — kembali ke login dengan pesan error
     header("Location: login.php?error=1");
     exit;
 }
 
-// Jika diakses langsung tanpa POST
 header("Location: login.php");
 exit;
 ?>

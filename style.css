@@ -776,3 +776,299 @@ body.auth-page {
 
     .auth-card { padding: 32px 24px; }
 }
+
+/* ============================================
+   ADDITIONAL STYLES FOR NEW FEATURES
+   ============================================ */
+
+/* Style untuk link di top-bar (Profile, Dashboard) */
+.top-controls a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    background: var(--bg-surface);
+    color: var(--text-sub);
+    border: 1px solid var(--border);
+}
+
+.top-controls a:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+/* Khusus untuk tombol Logout biar beda */
+.top-controls a:last-child {
+    background: var(--danger-light);
+    color: var(--danger);
+    border-color: rgba(220,38,38,0.3);
+}
+
+.top-controls a:last-child:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+/* Style untuk dropdown filter biar kayak button lain */
+.filter-select {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 50px;
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.filter-select:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+}
+
+.filter-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(67,97,238,0.2);
+}
+
+/* Style untuk tombol sorting (mata kuliah, deadline) */
+.sort-link {
+    text-decoration: none;
+    color: var(--text-sub);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.sort-link:hover {
+    color: var(--accent);
+    background: var(--accent-light);
+}
+
+.sort-link::after {
+    content: "↕️";
+    font-size: 10px;
+    opacity: 0.5;
+}
+
+.sort-active {
+    color: var(--accent);
+    background: var(--accent-light);
+}
+
+/* Style untuk badge prioritas di tabel */
+.prioritas-badge {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* Style untuk pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.pagination a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text-sub);
+    background: var(--bg-surface);
+    transition: all 0.2s;
+}
+
+.pagination a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.pagination a.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+/* Style untuk kartu statistik di dashboard */
+.stat-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent);
+}
+
+/* Style untuk chart container */
+.chart-container {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    transition: all 0.2s;
+}
+
+.chart-container:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Style untuk tombol di admin panel */
+.admin-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.admin-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+}
+
+.strength-wrap {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.strength-seg {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.strength-seg.weak { background: #F59E0B; }  /* Kuning - perlu perbaikan */
+.strength-seg.medium { background: #3B82F6; } /* Biru - cukup */
+.strength-seg.strong { background: #10B981; } /* Hijau - bagus */
+
+#strength-text {
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.strength-weak { color: #F59E0B; }
+.strength-medium { color: #3B82F6; }
+.strength-strong { color: #10B981; }
+
+/* Password strength */
+.strength-wrap {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.strength-seg {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.strength-seg.weak { background: #EF4444; }
+.strength-seg.medium { background: #F59E0B; }
+.strength-seg.good { background: #3B82F6; }
+.strength-seg.strong { background: #10B981; }
+
+#strength-text {
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.strength-weak { color: #EF4444; }
+.strength-medium { color: #F59E0B; }
+.strength-good { color: #3B82F6; }
+.strength-strong { color: #10B981; }
+
+code {
+    background: var(--bg-surface);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* Success message styling */
+.success-card {
+    animation: fadeInUp 0.5s ease both;
+}
+
+.success-icon {
+    box-shadow: 0 8px 20px rgba(16,185,129,0.3);
+    animation: pop 0.4s ease both;
+}
+
+.btn-success:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(16,185,129,0.3);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0);
+    }
+    80% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
